@@ -1,8 +1,6 @@
-from SystemPrograms.TextGeneration import GenerateText
-from SystemPrograms.Memory import *
-from SystemPrograms.VoiceGeneration import *
-from SystemPrograms.VoiceRecognition import *
-from SystemPrograms.Vision.AI_Vision import *
+from SystemPrograms.TextGeneration.GenerateText import BaseAI
+from SystemPrograms.Vision.AI_Vision import VisionModel
+
 from SystemPrograms import SystemSetup
 
 import threading

@@ -1,1 +1,1 @@
-from SystemPrograms.Vision.AI_Vision import AI_Vision
+from SystemPrograms.Vision.AI_Vision import VisionModel

@@ -1,1 +1,1 @@
-from SystemPrograms.TextGeneration.GenerateText import GenerateText
+from SystemPrograms.TextGeneration.GenerateText import BaseAI
