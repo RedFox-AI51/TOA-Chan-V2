@@ -1,4 +1,3 @@
-from SystemPrograms import Memory
 from SystemPrograms import SystemSetup
 from SystemPrograms import TextGeneration
 from SystemPrograms import Vision

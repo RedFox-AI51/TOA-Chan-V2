@@ -18,7 +18,7 @@ def load_api_key():
         return None
 
 class BaseAI:
-    def __init__(self, memory_file="SystemFiles/memory.json"):
+    def __init__(self, memory_file="SystemFiles/Memory/memory.json"):
         self.api_key = load_api_key()
         if not self.api_key:
             raise ValueError("API key not found in tokens.json")
@@ -27,7 +27,7 @@ class BaseAI:
 
         # Initialize system prompt if memory is empty
         if not self.memory:
-            self.memory.append({"role": "system", "content": "Your name is Toa-chan. As far as you know, you're a human."})
+            self.memory.append({"role": "system", "content": "Your name is Toa-chan. As far as you know, you're a human and you are very curious about everything."})
 
     def load_memory(self):
         """Loads chat memory from a file."""

@@ -5,15 +5,13 @@ import json
 import time
 import threading
 import os
+from SystemPrograms.Vision.FacialRecognition import FaceRecognizer
 from SystemPrograms.SystemSetup.ReadConfigs import ReadConfigs
 
-# Load configurations
+# Load API key from tokens.json
 app = ReadConfigs()
 CONFIG = app.load_config()
-
-# Locate and read API key from tokens.json
 FILE_TO_FIND = "tokens.json"
-TOKEN_FILE_PATH = app.get_file_path(CONFIG, FILE_TO_FIND)
 
 def load_api_key():
     try:
@@ -23,25 +21,21 @@ def load_api_key():
     except (FileNotFoundError, json.JSONDecodeError):
         return None
 
-# Load API key from tokens.json
-try:
-    API_KEY = load_api_key()
-    if not API_KEY:
-        raise ValueError("API key missing in tokens.json")
-except Exception as e:
-    print(f"[ERROR] {e}")
-    API_KEY = None
+API_KEY = load_api_key()
+if not API_KEY:
+    print("[ERROR] Missing API key. Ensure 'tokens.json' is configured.")
 
 class VisionModel:
-    def __init__(self, api_key, vision_file="SystemFiles/vision_memory.txt", capture_interval=5, camera_index=1):
+    def __init__(self, api_key, vision_file="SystemFiles/Memory/vision_memory.txt", capture_interval=5, camera_index=1):
         if not api_key:
-            raise ValueError("Missing API key. Ensure tokens.json contains 'openrouter_api_key'.")
+            raise ValueError("Missing API key.")
         
         self.api_key = api_key
         self.vision_file = vision_file
         self.capture_interval = capture_interval
         self.camera_index = camera_index
-        self.running = True  # Flag to control vision thread
+        self.running = True
+        self.face_recognizer = FaceRecognizer()
 
     def encode_image_to_base64(self, image):
         """Converts an image to base64 format."""
@@ -49,13 +43,9 @@ class VisionModel:
         return base64.b64encode(buffer).decode("utf-8")
 
     def analyze_image(self, image):
-        """Sends an image to OpenRouter for analysis and saves the response."""
+        """Sends an image to OpenRouter AI for object recognition."""
         image_base64 = self.encode_image_to_base64(image)
-        
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
+        headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
 
         data = {
             "model": "meta-llama/llama-3.2-11b-vision-instruct:free",
@@ -63,7 +53,7 @@ class VisionModel:
                 {
                     "role": "user",
                     "content": [
-                        {"type": "text", "text": "Describe what is in this image."},
+                        {"type": "text", "text": "Describe what is in this image as if looking through your own eyes."},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{image_base64}"}}
                     ]
                 }
@@ -97,21 +87,34 @@ class VisionModel:
             return "No recent visual data."
 
     def vision_loop(self):
-        """Continuously captures images and sends them for analysis."""
-        cap = cv2.VideoCapture(self.camera_index)  # Open webcam
+        """Captures frames, processes face recognition, and AI analysis."""
+        cap = cv2.VideoCapture(self.camera_index)
+
         while self.running:
             ret, frame = cap.read()
             if ret:
-                self.analyze_image(frame)
-            time.sleep(self.capture_interval)  # Wait before capturing again
+                recognized_faces = self.face_recognizer.recognize_faces(frame)
+                vision_data = self.analyze_image(frame)
+                
+                print(f"AI Vision: {vision_data}")
+                print(f"Recognized Faces: {recognized_faces}")
+
+                cv2.imshow("AI Vision & Face Recognition", frame)
+
+            if cv2.waitKey(1) & 0xFF == ord("q"):
+                break
+
+            time.sleep(self.capture_interval)
+
         cap.release()
+        cv2.destroyAllWindows()
 
     def start_vision_processing(self):
-        """Starts the vision processing in a background thread."""
+        """Starts vision processing in a background thread."""
         threading.Thread(target=self.vision_loop, daemon=True).start()
 
     def stop_vision_processing(self):
-        """Stops the vision processing loop."""
+        """Stops vision processing loop."""
         self.running = False
 
 def main():
@@ -120,15 +123,17 @@ def main():
         vision.start_vision_processing()
 
         while True:
-            cmd = input("Enter 'see' to get vision data or 'quit' to exit: ")
+            cmd = input("Enter 'see' to get vision data, 'faces' to list known faces, or 'quit' to exit: ")
             if cmd.lower() == "see":
                 print("AI sees:", vision.get_vision_data())
+            elif cmd.lower() == "faces":
+                print("Known Faces:", vision.face_recognizer.known_faces["names"])
             elif cmd.lower() == "quit":
                 vision.stop_vision_processing()
                 break
     else:
         print("[ERROR] Could not initialize AI Vision due to missing API key.")
 
-# Example usage:
 if __name__ == "__main__":
-    print("Starting AI Vision...")
+    print("Starting AI Vision with Face Recognition...")
+    main()
