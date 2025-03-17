@@ -1,5 +1,3 @@
-from SystemPrograms.TextGeneration.GenerateText import BaseAI
-from SystemPrograms.Vision.AI_Vision import VisionModel
 from SystemPrograms.VoiceGeneration.VoiceSynthesis import Voice
 
 from SystemPrograms import SystemSetup
