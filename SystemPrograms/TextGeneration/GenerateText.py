@@ -99,8 +99,7 @@ class BaseAI:
         else:
             return f"API Error: {response.status_code} - {response.text}"
 
-# Example Usage
-if __name__ == "__main__":
+def main():
     try:
         toa_ai = BaseAI()
     except ValueError as e:
@@ -113,3 +112,7 @@ if __name__ == "__main__":
             break
         response = toa_ai.chat_with_ai(user_message)
         print(f"AI: {response}")
+
+# Example Usage
+if __name__ == "__main__":
+    print("Starting AI Chat...")

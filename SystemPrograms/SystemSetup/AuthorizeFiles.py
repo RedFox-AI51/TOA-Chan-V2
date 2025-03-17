@@ -96,14 +96,18 @@ class AuthorizeFiles:
         for filepath in self.passed_files:
             filename = os.path.basename(filepath)
             section = os.path.relpath(os.path.dirname(filepath), BASE_PATH).replace(os.sep, ".")
-            termcolor.cprint(f"Running -> {filename}", "yellow")
+
+            # Convert file path to module name
+            module_name = os.path.relpath(filepath, BASE_PATH).replace(os.sep, ".").replace(".py", "")
+
+            termcolor.cprint(f"Running -> {filename} as {module_name}", "yellow")
             try:
-                result = subprocess.run(["python", filepath], capture_output=True, text=True, timeout=10)
+                result = subprocess.run(["python", "-m", module_name], capture_output=True, text=True, timeout=10)
                 if result.returncode == 0:
                     termcolor.cprint(f"[{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}] Runtime OK: {filename}", "green")
                     self.set_file_status(section, filename, "enabled")
                 else:
-                    termcolor.cprint(f"[{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}] Runtime ERROR: {filename} | ERROR: {result}", "red")
+                    termcolor.cprint(f"[{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}] Runtime ERROR: {filename} | ERROR: {result.stderr}", "red")
                     self.set_file_status(section, filename, "disabled")
             except subprocess.TimeoutExpired:
                 termcolor.cprint(f"[{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}] Timeout ERROR: {filename}", "red")
@@ -111,6 +115,7 @@ class AuthorizeFiles:
             except Exception as e:
                 termcolor.cprint(f"[{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}] Unexpected ERROR: {e}", "red")
                 self.set_file_status(section, filename, "disabled")
+
 
 if __name__ == "__main__":
     app = AuthorizeFiles()
