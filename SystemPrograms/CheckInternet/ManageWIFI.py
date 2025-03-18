@@ -52,7 +52,7 @@ class CheckWIFI:
         return False
 
     def get_wifi_strength(self):
-        """Get WiFi signal strength (dBm for Linux, percentage for Windows)."""
+        """Get WiFi signal strength (percentage for Windows, dBm for Linux)."""
         os_name = platform.system()
 
         if os_name == "Linux":
@@ -60,35 +60,31 @@ class CheckWIFI:
                 output = subprocess.check_output("iwconfig 2>/dev/null", shell=True).decode()
                 match = re.search(r"Signal level=(-?\d+) dBm", output)
                 if match:
-                    return int(match.group(1)), "dBm"
+                    return f"{match.group(1)} dBm"
             except Exception:
-                return None, None
+                return "Unknown"
 
         elif os_name == "Windows":
             try:
                 output = subprocess.check_output("netsh wlan show interfaces", shell=True).decode()
                 match = re.search(r"Signal\s*:\s*(\d+)", output)
                 if match:
-                    return int(match.group(1)), "%"
+                    return f"{match.group(1)} %"
             except Exception:
-                return None, None
+                return "Unknown"
 
-        return None, None
+        return "Unknown"
 
 
 if __name__ == "__main__":
-    manageWiFi = CheckWIFI()
+    wifi_manager = CheckWIFI()
+    
+    wifi_connected = wifi_manager.get_wifi_status()
+    wifi_strength = wifi_manager.get_wifi_strength() if wifi_connected else "N/A"
 
-    wifi_connected = manageWiFi.get_wifi_status()
-    wifi_strength, strength_unit = manageWiFi.get_wifi_strength() if wifi_connected else (None, None)
-
-    # Print WiFi status
     print(f"WiFi Connected: {'Yes' if wifi_connected else 'No'}")
-    if wifi_strength is not None:
-        print(f"WiFi Signal Strength: {wifi_strength} {strength_unit}")
-    else:
-        print("WiFi Strength: Unknown")
+    print(f"WiFi Signal Strength: {wifi_strength}")
 
     # Log WiFi data
-    log_msg = f"WiFi Status: {'Connected' if wifi_connected else 'Disconnected'}, Strength: {wifi_strength} {strength_unit if strength_unit else ''}"
-    manageWiFi.__save_to_log__(log_msg)
+    log_msg = f"WiFi Status: {'Connected' if wifi_connected else 'Disconnected'}, Strength: {wifi_strength}"
+    wifi_manager.__save_to_log__(log_msg)
