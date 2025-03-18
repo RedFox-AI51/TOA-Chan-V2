@@ -5,6 +5,11 @@ import time
 from datetime import datetime
 from SystemPrograms.SystemSetup.ReadConfigs import ReadConfigs
 
+# WiFi Check Integration
+from SystemPrograms.CheckInternet.ManageWIFI import CheckWIFI
+manageWiFi = CheckWIFI()
+wifi_connected = manageWiFi.get_wifi_status()
+
 app = ReadConfigs()
 CONFIG = app.load_config()
 FILE_TO_FIND = app.get_file_path(CONFIG, "tokens.json")
@@ -73,6 +78,11 @@ class BaseAI:
 
         if "how long since last message" in user_input.lower():
             self.memory.append({"role": "system", "content": f"Your last message was {self.get_time_since_last_interaction()}"})
+        
+        if not wifi_connected:
+            print("No WiFi Connection")
+            return
+        
 
         self.memory.append({"role": "user", "content": user_input})
 

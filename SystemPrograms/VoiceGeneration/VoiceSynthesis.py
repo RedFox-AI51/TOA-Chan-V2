@@ -5,6 +5,11 @@ from pydub import AudioSegment
 from pydub.playback import play
 from SystemPrograms.SystemSetup.ReadConfigs import ReadConfigs
 
+# WiFi Check Integration
+from SystemPrograms.CheckInternet.ManageWIFI import CheckWIFI
+manageWiFi = CheckWIFI()
+wifi_connected = manageWiFi.get_wifi_status()
+
 class Voice:
     def __init__(self, output_path="SystemFiles/temp/output.mp3", chunk_size=1024):
         # Load API key and voice ID from tokens.json using ReadConfigs
@@ -39,6 +44,10 @@ class Voice:
         """
         if not self.api_key or not self.voice_id:
             print("API key or VoiceID missing. Please check your configuration.")
+            return
+        
+        if not wifi_connected:
+            print("No WiFi Connection")
             return
         
         data = {

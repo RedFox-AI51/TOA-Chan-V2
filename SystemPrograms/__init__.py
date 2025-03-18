@@ -3,3 +3,4 @@ from SystemPrograms import TextGeneration
 from SystemPrograms import Vision
 from SystemPrograms import VoiceGeneration
 from SystemPrograms import VoiceRecognition
+from SystemPrograms import CheckInternet

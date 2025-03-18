@@ -8,6 +8,11 @@ import os
 from SystemPrograms.Vision.FacialRecognition import FaceRecognizer
 from SystemPrograms.SystemSetup.ReadConfigs import ReadConfigs
 
+# WiFi Check Integration
+from SystemPrograms.CheckInternet.ManageWIFI import CheckWIFI
+manageWiFi = CheckWIFI()
+wifi_connected = manageWiFi.get_wifi_status()
+
 # Load API key from tokens.json
 app = ReadConfigs()
 CONFIG = app.load_config()
@@ -46,6 +51,10 @@ class VisionModel:
         """Sends an image to OpenRouter AI for object recognition."""
         image_base64 = self.encode_image_to_base64(image)
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
+
+        if not wifi_connected:
+            print("No WiFi Connection")
+            return
 
         data = {
             "model": "meta-llama/llama-3.2-11b-vision-instruct:free",
