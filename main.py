@@ -1,4 +1,5 @@
 from SystemPrograms.VoiceGeneration.VoiceSynthesis import Voice
+from SystemPrograms.VoiceRecognition.VoiceDetection import SpeechRecognizer
 
 from SystemPrograms import SystemSetup
 
@@ -7,6 +8,9 @@ import datetime
 import time
 
 SystemSetup.InitializeSystem()
+
+recognizer = SpeechRecognizer()
+recognizer.recognize_speech()
 
 TEXT_TO_SPEAK = "Hi, I'm Toa chan"
 tts = Voice()
