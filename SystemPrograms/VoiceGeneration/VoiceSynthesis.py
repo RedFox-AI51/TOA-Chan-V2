@@ -100,13 +100,17 @@ class Voice:
 
 # Example usage
 if __name__ == "__main__":
-    TEXT_TO_SPEAK = "Hi, I'm Toa chan"
+    try:
+        TEXT_TO_SPEAK = "Hi, I'm Toa chan"
 
-    # Initialize the Voice class
-    tts = Voice()
+        # Initialize the Voice class
+        tts = Voice()
 
-    # Generate audio with the specified text
-    tts.generate_audio(text=TEXT_TO_SPEAK)
+        # Generate audio with the specified text
+        tts.generate_audio(text=TEXT_TO_SPEAK)
 
-    # Play the generated audio
-    tts.play_audio()
+        # Play the generated audio
+        tts.play_audio()
+    except Exception as e:
+        print(e)
+        quit()
