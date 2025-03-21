@@ -27,5 +27,9 @@ class SpeechRecognizer:
         return None
 
 if __name__ == "__main__":
-    recognizer = SpeechRecognizer()
-    recognizer.recognize_speech()
+    try:
+        recognizer = SpeechRecognizer()
+        recognizer.recognize_speech()
+    except Exception as e:
+        print(e)
+        quit()
