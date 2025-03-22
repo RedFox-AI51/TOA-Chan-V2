@@ -32,4 +32,3 @@ if __name__ == "__main__":
         recognizer.recognize_speech()
     except Exception as e:
         print(e)
-        quit()
