@@ -1,13 +1,14 @@
 from SystemPrograms.VoiceGeneration.VoiceSynthesis import Voice
 from SystemPrograms.VoiceRecognition.VoiceDetection import SpeechRecognizer
 
-from SystemPrograms import SystemSetup
+from SubprocessTerminal import TerminalManager
 
 import threading
 import datetime
 import time
 
-SystemSetup.InitializeSystem()
+setup = TerminalManager()
+setup.open_terminal
 
 recognizer = SpeechRecognizer()
 recognizer.recognize_speech()

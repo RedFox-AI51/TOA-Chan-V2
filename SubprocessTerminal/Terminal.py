@@ -29,7 +29,7 @@ class TerminalManager:
         Runs the terminal process at the given path.
         """
         if os.name == 'nt':  # Windows
-            subprocess.Popen(f'start cmd.exe /K "cd /d {path} && python -c "import time; from SystemPrograms import SystemSetup; SystemSetup.InitializeSystem()""', shell=True)
+            subprocess.Popen(f'start cmd.exe /K "cd /d {path} && python -c "from SystemPrograms import SystemSetup; SystemSetup.InitializeSystem()""', shell=True)
         else:  # Linux/macOS
             subprocess.Popen(['x-terminal-emulator', '--working-directory', path])
     
