@@ -4,7 +4,7 @@ import time
 import os
 from pathlib import Path
 
-BASE_PATH = Path(__file__).resolve().parents[2]  # Moves up three levels
+BASE_PATH = Path(__file__).resolve().parents[1]  # Moves up two levels
 
 class TerminalManager:
     def __init__(self):

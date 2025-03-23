@@ -26,8 +26,5 @@ def InitializeSystem():
 
     termcolor.cprint("✅ System Initialization Complete!", "green")
 
-    SystemLoop()
-
-def SystemLoop():
     while True:
         time.sleep(1)

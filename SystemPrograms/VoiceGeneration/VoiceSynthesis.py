@@ -1,21 +1,23 @@
 import requests
 import os
 import json
+from pathlib import Path
 from pydub import AudioSegment
 from pydub.playback import play
-from SystemPrograms.SystemSetup.ReadConfigs import ReadConfigs
 
 # WiFi Check Integration
 from SystemPrograms.CheckInternet.ManageWIFI import CheckWIFI
 manageWiFi = CheckWIFI()
 wifi_connected = manageWiFi.get_wifi_status()
 
+BASE_PATH = Path(__file__).resolve().parents[2]  # Moves up three levels
+SYSTEM_FILES_PATH = os.path.join(BASE_PATH, "SystemFiles")
+
 class Voice:
     def __init__(self, output_path="SystemFiles/temp/output.mp3", chunk_size=1024):
         # Load API key and voice ID from tokens.json using ReadConfigs
-        self.config_reader = ReadConfigs()
-        tokens_path = self.config_reader.get_file_path(self.config_reader.load_config(), "tokens.json")
-        
+        tokens_path = os.path.join(SYSTEM_FILES_PATH, "tokens.json")
+
         self.api_key, self.voice_id = self._load_api_details(tokens_path)
         self.output_path = output_path
         self.wav_path = "SystemFiles/temp/output.wav"  # Path for the converted wav file
@@ -97,20 +99,3 @@ class Voice:
                 print(f"Failed to play the audio: {str(e)}")
         else:
             print(f"Audio file {self.output_path} not found. Please generate it first.")
-
-# Example usage
-if __name__ == "__main__":
-    try:
-        TEXT_TO_SPEAK = "Hi, I'm Toa chan"
-
-        # Initialize the Voice class
-        tts = Voice()
-
-        # Generate audio with the specified text
-        tts.generate_audio(text=TEXT_TO_SPEAK)
-
-        # Play the generated audio
-        tts.play_audio()
-    except Exception as e:
-        print(e)
-        quit()

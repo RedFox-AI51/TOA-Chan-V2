@@ -1,6 +1,7 @@
 import requests
 import json
 import re
+import os
 import time
 from datetime import datetime
 from SystemPrograms.SystemSetup.ReadConfigs import ReadConfigs
@@ -10,15 +11,17 @@ from SystemPrograms.CheckInternet.ManageWIFI import CheckWIFI
 manageWiFi = CheckWIFI()
 wifi_connected = manageWiFi.get_wifi_status()
 
-app = ReadConfigs()
-CONFIG = app.load_config()
-FILE_TO_FIND = app.get_file_path(CONFIG, "tokens.json")
+from pathlib import Path
+
+BASE_PATH = Path(__file__).resolve().parents[2]  # Moves up three levels
+SYSTEM_FILES_PATH = os.path.join(BASE_PATH, "SystemFiles")
+FILE_TO_FIND = os.path.join(SYSTEM_FILES_PATH, "tokens.json")
 
 def load_api_key():
     try:
         with open(FILE_TO_FIND, "r") as file:
             tokens = json.load(file)
-            return tokens.get("TOA-Chan V2", {}).get("gpt-main", None)
+            return tokens["TOA-Chan V2"]["gpt-main"]
     except (FileNotFoundError, json.JSONDecodeError):
         return None
 
@@ -82,7 +85,6 @@ class BaseAI:
         if not wifi_connected:
             print("No WiFi Connection")
             return
-        
 
         self.memory.append({"role": "user", "content": user_input})
 

@@ -8,7 +8,9 @@ import datetime
 import time
 
 setup = TerminalManager()
-setup.open_terminal
+setup.open_terminal()
+
+time.sleep(75)
 
 recognizer = SpeechRecognizer()
 recognizer.recognize_speech()
