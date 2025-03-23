@@ -147,4 +147,4 @@ def main():
 
 if __name__ == "__main__":
     print("Starting AI Vision with Face Recognition...")
-    main()
+    # main()
