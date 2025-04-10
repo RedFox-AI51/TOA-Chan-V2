@@ -1,5 +1,5 @@
-from SystemPrograms.VoiceGeneration.VoiceSynthesis import Voice
-from SystemPrograms.VoiceRecognition.VoiceDetection import SpeechRecognizer
+from SystemPrograms.TextGeneration.GenerateText import BaseAI
+from SystemPrograms.Vision.AI_Vision import VisionModel
 
 from SubprocessTerminal import TerminalManager
 
@@ -7,15 +7,20 @@ import threading
 import datetime
 import time
 
-setup = TerminalManager()
-setup.open_terminal()
+# setup = TerminalManager()
+# setup.open_terminal()
 
-time.sleep(75)
+# Facial Recognition and AI
+toa_v = VisionModel()
+toa_b = BaseAI()
 
-recognizer = SpeechRecognizer()
-recognizer.recognize_speech()
+# Start the vision processing in a separate thread
+toa_v.start_vision_processing()
 
-TEXT_TO_SPEAK = "Hi, I'm Toa chan"
-tts = Voice()
-tts.generate_audio(text=TEXT_TO_SPEAK)
-tts.play_audio()
+# Start the BaseAI
+while True:
+    user_message = input("You: ")
+    if user_message.lower() in ["exit", "quit"]:
+        break
+    response = toa_b.chat_with_ai(user_message)
+    print(f"Toa: {response}")

@@ -33,11 +33,11 @@ if not API_KEY:
     print("[ERROR] Missing API key. Ensure 'tokens.json' is configured.")
 
 class VisionModel:
-    def __init__(self, api_key, vision_file="SystemFiles/Memory/vision_memory.txt", capture_interval=5, camera_index=1):
-        if not api_key:
+    def __init__(self, vision_file="SystemFiles/Memory/vision_memory.txt", capture_interval=10, camera_index=0):
+        if not API_KEY:
             raise ValueError("Missing API key.")
         
-        self.api_key = api_key
+        self.api_key = API_KEY
         self.vision_file = vision_file
         self.capture_interval = capture_interval
         self.camera_index = camera_index
@@ -107,10 +107,10 @@ class VisionModel:
                 recognized_faces = self.face_recognizer.recognize_faces(frame)
                 vision_data = self.analyze_image(frame)
                 
-                print(f"AI Vision: {vision_data}")
-                print(f"Recognized Faces: {recognized_faces}")
+                # print(f"AI Vision: {vision_data}")
+                # print(f"Recognized Faces: {recognized_faces}")
 
-                cv2.imshow("AI Vision & Face Recognition", frame)
+                # cv2.imshow("AI Vision & Face Recognition", frame)
 
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
